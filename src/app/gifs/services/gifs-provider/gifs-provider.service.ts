@@ -1,10 +1,19 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { GifItem } from '../../interfaces/gif-item.interface';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '@environments/environment';
+import type { GiphyResponse } from '../../interfaces/giphy.interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GifsProviderService {
+
+  constructor() {
+    this.loadTrendingGifs();
+  }
+
+  private http = inject(HttpClient);
 
   private gifList: GifItem[] = [
     {
@@ -71,6 +80,18 @@ export class GifsProviderService {
 
   public get gifItemsListGetter() : GifItem[] {
     return this.gifList;
+  }
+
+  loadTrendingGifs() {
+    this.http.get<GiphyResponse>(`${ environment.apiUrl}/gifs/trending`, {
+      params: {
+        api_key: environment.apikey,
+        limit: 20
+      }
+    }).subscribe( (res) => {
+      console.log('http res:', res);
+
+    })
   }
 
 }

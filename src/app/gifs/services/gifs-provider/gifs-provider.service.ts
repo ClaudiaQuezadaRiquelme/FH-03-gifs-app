@@ -34,4 +34,19 @@ export class GifsProviderService {
     })
   }
 
+  searchGifs(query: string) { // https://api.giphy.com/v1/gifs/search?api_key=fpBLP0AcrZUrTX7aczQWnaWPrRFic8TF&q=&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips
+    this.http.get<GiphyResponse>(`${ environment.apiUrl}/gifs/search`, {
+      params: {
+        api_key: environment.apikey,
+        q: query,
+        limit: 20
+      }
+    }).subscribe( (res) => {
+      console.log('http res:', res);
+      const gifs = GifMapper.mapGiphyItemsToGifArray(res.data);
+    })
+
+
+  }
+
 }

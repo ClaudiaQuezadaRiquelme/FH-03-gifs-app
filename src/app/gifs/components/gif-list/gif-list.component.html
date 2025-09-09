@@ -1,8 +1,4 @@
 
-@for (item of gifList; track item.src) {
-  <app-gif-list-item
-    [class]="item.class"
-    [src]="item.src"
-    [alt]="item.alt"
-  />
+@for (item of gifs(); track item.url) {
+  <app-gif-list-item [src]="item.url" />
 }

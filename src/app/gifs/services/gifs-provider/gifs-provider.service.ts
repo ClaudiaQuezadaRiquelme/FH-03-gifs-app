@@ -1,10 +1,18 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import type { GiphyResponse } from '../../interfaces/giphy.interfaces';
 import { Gif } from '../../interfaces/gif.interface';
 import { GifMapper } from '../../mapper/gif.mapper';
 import { map, Observable, tap } from 'rxjs';
+
+const GIF_KEY = 'history';
+
+const loadFromLocalStorage = (): Record<string, Gif[]> => {
+  const history = localStorage.getItem(GIF_KEY); // Estamos asumiendo que estará guardado un history, pero un usuario con conocimientos puede modificar el localStorage a voluntad
+  return history ? JSON.parse(history) : {};
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +28,12 @@ export class GifsProviderService {
   trendingGifs = signal<Gif[]>([]);
   trendingGifsLoading = signal(true);
 
-  searchHistory = signal<Record<string, Gif[]>>({}); // guardar caché historial
+  searchHistory = signal<Record<string, Gif[]>>(loadFromLocalStorage()); // guardar caché historial y en localstorage
   searchHistoryKeys = computed( () => Object.keys(this.searchHistory()));
+
+  saveToLocalStorage = effect( () => {
+    localStorage.setItem(GIF_KEY, JSON.stringify(this.searchHistory()));
+  });
 
   loadTrendingGifs() {
     this.http.get<GiphyResponse>(`${ environment.apiUrl}/gifs/trending`, {

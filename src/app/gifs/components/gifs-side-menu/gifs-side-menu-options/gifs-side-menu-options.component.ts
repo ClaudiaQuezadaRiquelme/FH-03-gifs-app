@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { GifsProviderService } from 'src/app/gifs/services/gifs-provider/gifs-provider.service';
 
 interface MenuOption {
   label: string;
@@ -14,6 +15,8 @@ interface MenuOption {
   templateUrl: './gifs-side-menu-options.component.html',
 })
 export class GifsSideMenuOptionsComponent {
+  gifsService = inject(GifsProviderService);
+
   menuOptions: MenuOption[] = [ // esto se puede convertir a señal y así sería mucho más eficiente.
     {
       icon: 'fa-solid fa-chart-line',
@@ -27,5 +30,5 @@ export class GifsSideMenuOptionsComponent {
       subLabel: 'Buscar Gifs',
       route: '/dashboard/search'
     },
-  ]
+  ];
 }

@@ -4,7 +4,7 @@ import { environment } from '@environments/environment';
 import type { GiphyResponse } from '../../interfaces/giphy.interfaces';
 import { Gif } from '../../interfaces/gif.interface';
 import { GifMapper } from '../../mapper/gif.mapper';
-import { map, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +38,7 @@ export class GifsProviderService {
     })
   }
 
-  searchGifs(query: string) { // https://api.giphy.com/v1/gifs/search?api_key=fpBLP0AcrZUrTX7aczQWnaWPrRFic8TF&q=&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips
+  searchGifs(query: string): Observable<Gif[]> { // https://api.giphy.com/v1/gifs/search?api_key=fpBLP0AcrZUrTX7aczQWnaWPrRFic8TF&q=&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips
     return this.http.get<GiphyResponse>(`${ environment.apiUrl}/gifs/search`, {
       params: {
         api_key: environment.apikey,
@@ -63,8 +63,9 @@ export class GifsProviderService {
     //   console.log('http res:', res);
     //   const gifs = GifMapper.mapGiphyItemsToGifArray(res.data);
     // })
-
-
   }
 
+  getHistoryGifs(query: string): Gif[] {
+    return this.searchHistory()[query] ?? [];
+  }
 }
